@@ -3,14 +3,6 @@
 #include <iostream>
 #include <fstream>
 
-bool charCmp(char *data1, char *data2, size_t size)
-{
-  for (size_t i = 0; i < size; i++)
-    if (data1[i] != data2[i])
-      return false;
-  return true;
-}
-
 int main(void)
 {
   std::string originalFileName, modifiedFileName;
@@ -50,13 +42,13 @@ int main(void)
   for (size_t i = 0; i < originalFileSize; i++)
   {
     char data2[4] = {0x50, 0x4B, 0x03, 0x04};
-    if (charCmp(&originalData[i], data2, 4))
+    if (!memcmp(&originalData[i], data2, 4))
     {
       if (num == files++)
       {
         newFile.write((char *)&modifiedData[0], modifiedFileSize);
-        i+=10;
-        while (!charCmp(&originalData[i++], data2, 4))
+        i += 10;
+        while (memcmp(&originalData[i++], data2, 4))
           ;
         newFile.write((char *)&originalData[i], originalFileSize - i);
         break;

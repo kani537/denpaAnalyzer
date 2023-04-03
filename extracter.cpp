@@ -3,22 +3,26 @@
 #include <iostream>
 #include <fstream>
 
-bool charCmp(char *data1, char *data2, size_t size)
-{
-  for (size_t i = 0; i < size; i++)
-    if (data1[i] != data2[i])
-      return false;
-  return true;
-}
-
-int main(void)
+int main(int argc, char **argv)
 {
   std::string fileName;
 
-  std::cout << "input file name:";
-  std::cin >> fileName;
-
+  if (argc == 2)
+  {
+    fileName = std::string(argv[1]);
+  }
+  else
+  {
+    std::cout << "input file name:";
+    std::cin >> fileName;
+  }
   std::ifstream ifs(fileName, std::ios::binary);
+
+  if (!ifs)
+  {
+    printf("an error occurred\n");
+    return 0;
+  }
 
   ifs.seekg(0, std::ios::end);
   size_t size = ifs.tellg();
@@ -32,13 +36,13 @@ int main(void)
   for (size_t i = 0; i < size - 4; i++)
   {
     char data2[4] = {0x50, 0x4B, 0x03, 0x04};
-    if (charCmp(&data[i], data2, 4))
+    if (!memcmp(&data[i], data2, 4))
     {
       std::ofstream newZip(std::to_string(files++) + ".zip", std::ios::trunc | std::ios::binary);
       char data2[4] = {0x50, 0x4B, 0x05, 0x06};
       while (i < size - 4)
       {
-        if (charCmp(&data[i], data2, 4))
+        if (!memcmp(&data[i], data2, 4))
         {
           for (size_t j = 0; j < 22; j++)
             newZip.write((char *)&data[i++], 1);
@@ -49,7 +53,7 @@ int main(void)
       newZip.close();
     }
   }
-  delete []data;
+  delete[] data;
   ifs.close();
 
   return 0;
