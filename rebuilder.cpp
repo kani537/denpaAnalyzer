@@ -47,10 +47,10 @@ int main(void)
       if (num == files++)
       {
         newFile.write((char *)&modifiedData[0], modifiedFileSize);
-        i += 10;
+        i++;
         while (memcmp(&originalData[i++], data2, 4))
           ;
-        newFile.write((char *)&originalData[i], originalFileSize - i);
+        newFile.write((char *)&originalData[i - 1], originalFileSize - i);
         break;
       }
       else
